@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.MainActivity">
+
+    <item
+        android:id="@+id/action_sms"
+        android:orderInCategory="98"
+        android:title="@string/action_sms"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_actualiser"
+        android:orderInCategory="99"
+        android:title="@string/action_actualiser"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_config"
+        android:orderInCategory="100"
+        android:title="@string/action_config"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_quitter"
+        android:orderInCategory="100"
+        android:title="@string/action_quitter"
+        app:showAsAction="never" />
+</menu>
