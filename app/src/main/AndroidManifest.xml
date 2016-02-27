@@ -69,7 +69,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.futurama.serenity.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.SmsActivity"></activity>
+        <activity android:name=".activities.SmsActivity"
+            android:label="@string/sms_suspect">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.futurama.serenity.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

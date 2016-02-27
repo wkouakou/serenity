@@ -14,7 +14,7 @@ import java.util.Date;
  * Created by Wilfried on 16/05/2015.
  */
 public class Utils {
-    public static String TAG = "NewStyle";
+    public static String TAG = "Serenity";
 
     public static void toast(String msg){
         Toast.makeText(MainApplication.getInstance().getApplicationContext(), msg, Toast.LENGTH_LONG).show();
@@ -35,5 +35,24 @@ public class Utils {
             return "";
         }
 
+    }
+
+    public static String cleanNumber(String phoneNumber) {
+        return phoneNumber.replaceAll("\\s+", "").replace("+","").replace("$00","");
+    }
+
+    public static boolean isClean(String msg) {
+        int j = 0;
+        for (int i = 0; i < Config.LISTMOTSUSPECT.size(); i++){
+            if(msg.contains(Config.LISTMOTSUSPECT.get(i))){
+                j++;
+            }
+        }
+        if(j > Config.niveauAlertSms){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Serenity</string>
+    <string name="sms_suspect">Liste des SMS suspects</string>
     <string name="google_app_id">1067911358612</string>
     <string name="action_quitter">Quitter</string>
     <string name="action_synchro">Synchroniser</string>

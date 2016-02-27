@@ -10,9 +10,12 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,11 +24,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.futurama.serenity.MainApplication;
 import com.futurama.serenity.R;
 import com.futurama.serenity.events.Position;
 import com.futurama.serenity.models.User;
+import com.futurama.serenity.models.WhiteList;
 import com.futurama.serenity.services.ClientService;
 import com.futurama.serenity.services.LocationService;
 import com.futurama.serenity.services.RegistrationIntentService;
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         buildLocationSettingsRequest();
         subscribe();
+        loadContacts();
     }
 
     @Override
@@ -378,7 +384,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void subscribe(){
         if(session.getSharedPref().getString("uid","").isEmpty()){
-            progressDialogs = ProgressDialog.show(mContext, null, "Veuillez patienter svp...", false, false);
+            progressDialogs = ProgressDialog.show(this, null, "Veuillez patienter svp...", false, false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialogs.dismiss();
+                }
+            }, 3000);
             Retrofit client = MainApplication.getRetrofit();
             ClientService service = client.create(ClientService.class);
             Call<GenericObjectResult<User>> call = service.subscribe(session.getSharedPref().getString("token", "*******************"));
@@ -494,5 +506,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         "not created.");
                 break;
         }
+    }
+
+    private void loadContacts(){
+        new AsyncTask() {
+            protected Object doInBackground(Object... params)
+            {
+                Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+                String numero;
+                while (phones.moveToNext())
+                {
+                    WhiteList whiteList = new WhiteList();
+                    numero = Utils.cleanNumber(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    whiteList.setNumero(numero);
+                    whiteList.save();
+                    Log.e("Numero Open", numero);
+                }
+                phones.close();
+                return "";
+            }
+            protected void onPostExecute(Object result)
+            {
+
+            }
+        }.execute(null, null, null);
     }
 }

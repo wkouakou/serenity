@@ -1,13 +1,18 @@
 package com.futurama.serenity.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Wilfried on 14/10/2015.
  */
 public class Config {
 
+    public static final List<String> LISTMOTSUSPECT =  Arrays.asList("Aucun", "Mediocre", "Passable", "Bien", "Très bien");
     public static final String MODE = "PROD"; //DEV | PROD
     public static final String PROD_BASE_URL = "http://52.3.214.184:8080"; //http://52.3.214.184:8080/rkimmo/
     public static final String DEV_BASE_URL = "http://192.168.1.66:8008";
+    public static final int niveauAlertSms = 2; //
 
     public static final String CONTENT_APPLICATION_JSON = "application/json";
     public static final String CONTENT_APPLICATION_STANDARD = "application/x-www-form-urlencoded";
