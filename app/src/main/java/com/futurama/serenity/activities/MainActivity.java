@@ -3,6 +3,7 @@ package com.futurama.serenity.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private ListView listViewSecteurActivite;
 
+    private ProgressDialog progressDialogs;
+
     private GoogleCloudMessaging gcm = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String regid = null;
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         buildLocationSettingsRequest();
+        subscribe();
     }
 
     @Override
@@ -374,6 +378,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void subscribe(){
         if(session.getSharedPref().getString("uid","").isEmpty()){
+            progressDialogs = ProgressDialog.show(mContext, null, "Veuillez patienter svp...", false, false);
             Retrofit client = MainApplication.getRetrofit();
             ClientService service = client.create(ClientService.class);
             Call<GenericObjectResult<User>> call = service.subscribe(session.getSharedPref().getString("token", "*******************"));
