@@ -407,10 +407,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }.execute(null, null, null);
     }
 
-    private void sendToServeur(String androidId){
+    private void sendToServeur(final String androidId){
         Log.e("REGID", androidId);
-        if(!androidId.isEmpty() && androidId.equals(session.getSharedPref().getString("androidId",""))){
-            session.getEditor().putString("androidId", androidId).commit();
+        if(!androidId.isEmpty()){// && !androidId.equals(session.getSharedPref().getString("androidId",""))){
+
             Retrofit client = MainApplication.getRetrofit();
             ClientService service = client.create(ClientService.class);
             Call<GenericObjectResult<User>> call = service.updateRegistration(session.getSharedPref().getString("token", "*******************"), session.getSharedPref().getString("uid", ""), androidId);
@@ -421,9 +421,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         // request successful (status code 200, 201)
                         GenericObjectResult<User> result = response.body();
                         if (result.getRow() != null) {
-
+                            session.getEditor().putString("androidId", androidId).commit();
                         }
-                        Log.i("RegistrationID", result.toString());
+                        Log.e("RegistrationID", result.toString());
                     } else {
                         //request not successful (like 400,401,403 etc)
                         //Handle errors
@@ -579,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     numero = Utils.cleanNumber(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                     whiteList.setNumero(numero);
                     whiteList.save();
-                    Log.e("Numero Open", numero);
+                    //Log.e("Numero Open", numero);
                 }
                 phones.close();
                 return "";
@@ -607,6 +607,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             message.save();
                             messageList.add(message);
                         }
+                        Log.e("Synchro", messageList.toString());
                         MainApplication.getBus().post(new Synchronisation("refreshTimeline"));
                     }
                     Log.i("RegistrationID", result.toString());

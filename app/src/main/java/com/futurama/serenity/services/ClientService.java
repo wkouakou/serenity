@@ -52,7 +52,7 @@ public interface ClientService {
      */
     @FormUrlEncoded
     @POST("/serenity/public/app/user/upd")
-    Call<GenericObjectResult<User>> updateRegistration(@Header("token") String token, @Field("uid") String uid, @Field("androidId") String androidId);
+    Call<GenericObjectResult<User>> updateRegistration(@Header("token") String token, @Field("uId") String uid, @Field("androidId") String androidId);
 
     /**
      * @param token
@@ -62,7 +62,7 @@ public interface ClientService {
      */
     @FormUrlEncoded
     @POST("/serenity/public/app/user/upd")
-    Call<GenericObjectResult<User>> updateNumero(@Header("token") String token, @Field("uid") String uid, @Field("numero") String numero);
+    Call<GenericObjectResult<User>> updateNumero(@Header("token") String token, @Field("uId") String uid, @Field("numero") String numero);
 
     /**
      * @param token
@@ -72,7 +72,7 @@ public interface ClientService {
      */
     @FormUrlEncoded
     @POST("/serenity/public/app/user/upd")
-    Call<GenericObjectResult<User>> updateEmail(@Header("token") String token, @Field("uid") String uid, @Field("email") String email);
+    Call<GenericObjectResult<User>> updateEmail(@Header("token") String token, @Field("uId") String uid, @Field("email") String email);
 
     /**
      * @param token
@@ -88,7 +88,7 @@ public interface ClientService {
      */
     @FormUrlEncoded
     @POST("/collarpartners/public/application/client/add")
-    Call<GenericObjectResult<SmsSuspect>> transfererMessage(@Header("token") String token, @Field("uid") String uid, @Field("latitude") float latitude, @Field("longitude") float longitude,
+    Call<GenericObjectResult<SmsSuspect>> transfererMessage(@Header("token") String token, @Field("uId") String uid, @Field("latitude") float latitude, @Field("longitude") float longitude,
                                                 @Field("datereception") String datereception, @Field("numerosuspect") String numerosuspect, @Field("numeroexpediteur") String numeroexpediteur,
                                                 @Field("msg") String msg, @Field("envoyerposition") boolean envoyerposition);
 
