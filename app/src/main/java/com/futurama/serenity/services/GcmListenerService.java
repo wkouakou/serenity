@@ -39,14 +39,15 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             //sendNotification(title, message);
         } else {
             Intent intent;
+            Session session = new Session();
             // normal downstream message.
             switch (collapseKey){
-                case "SYNCHRO_PARAMS":
-                    Session session = new Session();
-                    session.getEditor().putBoolean("synchTypeFacture", true);
-                    session.getEditor().putBoolean("synchModeReglement", true);
-                    session.getEditor().putBoolean("synchPrestattion", true);
-                    session.getEditor().commit();
+                case "info":
+                    session.getEditor().putBoolean("synchTimeline", true).commit();
+                    intent = new Intent(this, MainActivity.class);
+                    break;
+                case "params":
+                    session.getEditor().putBoolean("synchParams", true).commit();
                     intent = new Intent(this, MainActivity.class);
                     break;
                 default:

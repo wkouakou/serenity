@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private LocationRequest mLocationRequest;
 
-    private ProgressDialog progressDialogs;
+    private ProgressDialog progressDialogs, progressDialogsTimeline;
 
     private GoogleCloudMessaging gcm = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         loadContacts();
         initView();
         getTimeline();
+        getWhitelist();
     }
 
     private void initView(){
@@ -206,8 +207,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         switch (id){
             case R.id.action_actualiser :
+                progressDialogsTimeline = ProgressDialog.show(this, null, "Actualisation en cours...", false, false);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialogsTimeline.dismiss();
+                    }
+                }, 3000);
                 session.getEditor().putBoolean("synchTimeline", true).commit();
-                getTheme();
+                getTimeline();
                 return true;
             case R.id.action_sms :
                 Intent intentSms = new Intent(mContext, SmsActivity.class);
@@ -605,6 +613,42 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             }
                             Log.e("Synchro", messageList.toString());
                             MainApplication.getBus().post(new Synchronisation("refreshTimeline"));
+                        }
+                        Log.i("RegistrationID", result.toString());
+                    } else {
+                        //request not successful (like 400,401,403 etc)
+                        //Handle errors
+                        Log.i("Response code", String.valueOf(response.code()));
+                        Log.i("Response message", response.message());
+                        Log.i("Response header", response.headers().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private void getWhitelist(){
+        if(session.getSharedPref().getBoolean("synchParams", false)){
+            Retrofit client = MainApplication.getRetrofit();
+            ClientService service = client.create(ClientService.class);
+            Call<GenericObjectResult<WhiteList>> call = service.getWhiteList(session.getSharedPref().getString("token", "*******************"), session.getSharedPref().getInt("limit", 1000), session.getSharedPref().getInt("offset", 0));
+            call.enqueue(new Callback<GenericObjectResult<WhiteList>>() {
+                @Override
+                public void onResponse(Response<GenericObjectResult<WhiteList>> response) {
+                    if (response.isSuccess()) {
+                        // request successful (status code 200, 201)
+                        GenericObjectResult<WhiteList> result = response.body();
+                        if (result.getTotal() > 0) {
+                            messageList.clear();
+                            for(WhiteList whiteList : result.getRows()){
+                                whiteList.save();
+                            }
+                            session.getEditor().putBoolean("synchParams", false).commit();
                         }
                         Log.i("RegistrationID", result.toString());
                     } else {

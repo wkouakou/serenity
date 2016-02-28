@@ -96,7 +96,7 @@ public class SmsActivity extends AppCompatActivity {
         final TextView textViewNumero = (TextView) smsDialog.findViewById(R.id.numero);
         IconButton btnAjouterContact = (IconButton) smsDialog.findViewById(R.id.btn_ajouter_contact);
         IconButton btnValider = (IconButton) smsDialog.findViewById(R.id.btn_valider_statut);
-
+        textViewNumero.setText(session.getSharedPref().getString("numero", ""));
         radioGroupPosition.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -140,15 +140,8 @@ public class SmsActivity extends AppCompatActivity {
         });
     }
 
-    /*
-
-
-    @Field("numeroexpediteur") String numeroexpediteur,
-    @Field("msg") String msg, @Field("envoyerposition") boolean envoyerposition
-
-     */
-
     private void sendSms(SmsSuspect smsSuspect, String numero){
+        session.getEditor().putString("numero", numero).commit();
         progressDialogs = ProgressDialog.show(this, null, "Envoi en cours...", false, false);
         new Handler().postDelayed(new Runnable() {
             @Override

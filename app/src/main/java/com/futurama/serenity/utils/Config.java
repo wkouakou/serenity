@@ -36,9 +36,9 @@ public class Config {
             "interesse"
     );
     public static final String MODE = "PROD"; //DEV | PROD
-    public static final String PROD_BASE_URL = "http:192.168.11.100/"; //http://52.3.214.184:8080/rkimmo/
-    public static final String DEV_BASE_URL = "http://192.168.11.100";
-    public static final int niveauAlertSms = 2; //
+    public static final String PROD_BASE_URL = "http:192.168.43.94/"; //http://52.3.214.184:8080/rkimmo/
+    public static final String DEV_BASE_URL = "http://192.168.43.94";
+    public static final int niveauAlertSms = 1; //
 
     public static final String CONTENT_APPLICATION_JSON = "application/json";
     public static final String CONTENT_APPLICATION_STANDARD = "application/x-www-form-urlencoded";

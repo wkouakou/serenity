@@ -41,7 +41,7 @@ public interface ClientService {
      * @param token
      * @return
      */
-    @GET("/serenity/public/app/user/upd")
+    @GET("/serenity/public/app/liste-blanche/liste")
     Call<GenericObjectResult<WhiteList>> getWhiteList(@Header("token") String token, @Query("limit") int limit, @Query("offset") int offset);
 
     /**

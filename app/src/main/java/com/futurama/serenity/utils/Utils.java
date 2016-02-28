@@ -44,7 +44,7 @@ public class Utils {
     public static boolean isClean(String msg) {
         int j = 0;
         for (int i = 0; i < Config.LISTMOTSUSPECT.size(); i++){
-            if(msg.contains(Config.LISTMOTSUSPECT.get(i))){
+            if(msg.indexOf(Config.LISTMOTSUSPECT.get(i)) >= 0){
                 j++;
             }
         }
