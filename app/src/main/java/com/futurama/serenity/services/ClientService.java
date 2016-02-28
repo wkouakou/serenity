@@ -1,6 +1,7 @@
 package com.futurama.serenity.services;
 
 
+import com.futurama.serenity.models.Message;
 import com.futurama.serenity.models.SmsSuspect;
 import com.futurama.serenity.models.User;
 import com.futurama.serenity.models.WhiteList;
@@ -14,6 +15,7 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
+import retrofit.http.Query;
 
 /**
  * Created by wilfried on 04/01/2016.
@@ -32,8 +34,15 @@ public interface ClientService {
      * @param token
      * @return
      */
+    @GET("/serenity/public/app/msg/liste")
+    Call<GenericObjectResult<Message>> getTimeline(@Header("token") String token, @Query("limit") int limit, @Query("offset") int offset);
+
+    /**
+     * @param token
+     * @return
+     */
     @GET("/serenity/public/app/user/upd")
-    Call<List<GenericObjectResult<WhiteList>>> getWhiteList(@Header("token") String token);
+    Call<GenericObjectResult<WhiteList>> getWhiteList(@Header("token") String token, @Query("limit") int limit, @Query("offset") int offset);
 
     /**
      * @param token

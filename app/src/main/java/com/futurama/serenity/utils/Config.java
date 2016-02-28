@@ -8,7 +8,33 @@ import java.util.List;
  */
 public class Config {
 
-    public static final List<String> LISTMOTSUSPECT =  Arrays.asList("Aucun", "Mediocre", "Passable", "Bien", "Très bien");
+    public static final List<String> LISTMOTSUSPECT =  Arrays.asList(
+            "contact",
+            "heritage",
+            "transfert",
+            "huissier",
+            "gagne",
+            "tombola",
+            "concours",
+            "annonce",
+            "donation",
+            "lotterie",
+            "remboursement",
+            "colis",
+            "indemnise",
+            "retirer",
+            "interpol",
+            "fbi",
+            "cia",
+            "appel",
+            "impot",
+            "cheque",
+            "maitre",
+            "maladie",
+            "concessionnaire",
+            "fortune",
+            "interesse"
+    );
     public static final String MODE = "PROD"; //DEV | PROD
     public static final String PROD_BASE_URL = "http://52.3.214.184:8080"; //http://52.3.214.184:8080/rkimmo/
     public static final String DEV_BASE_URL = "http://192.168.1.66:8008";

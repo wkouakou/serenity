@@ -87,7 +87,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
             //Notify user
             Intent intentSms = new Intent(mContext, SmsActivity.class);
-            sendNotification(intentSms, "Serenity", "Vous avez réçu un SMS suspecté");
+            sendNotification(intentSms, "Serenity", "Vous avez réçu un SMS suspect");
         }
     }
 

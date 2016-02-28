@@ -5,9 +5,11 @@ import com.raizlabs.android.dbflow.annotation.ConflictAction;
 import com.raizlabs.android.dbflow.annotation.ModelContainer;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import java.sql.Date;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by wilfried on 06/01/2016.
@@ -72,5 +74,10 @@ public class Message extends BaseModel {
                 ", msg='" + msg + '\'' +
                 ", type=" + type +
                 '}';
+    }
+
+    public static List<Message> getMessages() {
+        return SQLite.select().from(Message.class)
+                .queryList();
     }
 }

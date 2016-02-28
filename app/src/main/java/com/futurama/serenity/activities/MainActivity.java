@@ -23,12 +23,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.futurama.serenity.MainApplication;
 import com.futurama.serenity.R;
+import com.futurama.serenity.adapters.AdapterTimeline;
 import com.futurama.serenity.events.Position;
+import com.futurama.serenity.events.Synchronisation;
+import com.futurama.serenity.models.Message;
 import com.futurama.serenity.models.User;
 import com.futurama.serenity.models.WhiteList;
 import com.futurama.serenity.services.ClientService;
@@ -53,9 +59,16 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.joanzapata.iconify.IconDrawable;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -65,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<LocationSettingsResult> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    @Bind(R.id.operation_result)
+    TextView tvNoResult;
+
+    @Bind(R.id.list_operation)
+    ListView lvOperation;
 
     protected LocationSettingsRequest mLocationSettingsRequest;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
@@ -82,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private GoogleCloudMessaging gcm = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private AdapterTimeline adapterTimeline;
+    private List<Message> messageList = new ArrayList<>();
     private String regid = null;
     private Session session;
     private Context mContext;
@@ -92,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         MainApplication.getBus().register(this);
         session = new Session();
+        ButterKnife.bind(this);
         mContext = MainApplication.getInstance().getApplicationContext();
 
         if (checkPlayServices()) {
@@ -118,6 +140,43 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         buildLocationSettingsRequest();
         subscribe();
         loadContacts();
+        initView();
+    }
+
+    private void initView(){
+        Message message = new Message();
+        message.setType(3);
+        message.setDateenvoi(new Date());
+        message.setMsg("Veuillez changer vos mots de passe de façon régulière.");
+        message.save();
+        getTimeline();
+        messageList = Message.getMessages();
+        if(messageList.size() > 0){
+            adapterTimeline = new AdapterTimeline(mContext, messageList);
+            lvOperation.setAdapter(adapterTimeline);
+            lvOperation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
+                    //TODO
+                }
+            });
+        }
+        else{
+            tvNoResult.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Subscribe
+    public void synchro(Synchronisation synchro){
+        switch (synchro.getType()){
+            case "refreshTimeline" :
+                if(adapterTimeline != null){
+                    adapterTimeline.notifyDataSetChanged();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -131,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         .actionBarSize());
         menu.findItem(R.id.action_sms).setIcon(
                 new IconDrawable(this, FontAwesomeIcons.fa_envelope)
-                        .color(Color.parseColor("#FF0000"))
+                        .color(Color.argb(1,172,140,51))
                         .actionBarSize());
         menu.findItem(R.id.action_config).setIcon(
                 new IconDrawable(this, FontAwesomeIcons.fa_cog)
@@ -530,5 +589,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         }.execute(null, null, null);
+    }
+
+    private void getTimeline(){
+        Retrofit client = MainApplication.getRetrofit();
+        ClientService service = client.create(ClientService.class);
+        Call<GenericObjectResult<Message>> call = service.getTimeline(session.getSharedPref().getString("token", "*******************"), session.getSharedPref().getInt("limit", 10), session.getSharedPref().getInt("offset", 0));
+        call.enqueue(new Callback<GenericObjectResult<Message>>() {
+            @Override
+            public void onResponse(Response<GenericObjectResult<Message>> response) {
+                if (response.isSuccess()) {
+                    // request successful (status code 200, 201)
+                    GenericObjectResult<Message> result = response.body();
+                    if (result.getTotal() > 0) {
+                        messageList.clear();
+                        for(Message message : result.getRows()){
+                            message.save();
+                            messageList.add(message);
+                        }
+                        MainApplication.getBus().post(new Synchronisation("refreshTimeline"));
+                    }
+                    Log.i("RegistrationID", result.toString());
+                } else {
+                    //request not successful (like 400,401,403 etc)
+                    //Handle errors
+                    Log.i("Response code", String.valueOf(response.code()));
+                    Log.i("Response message", response.message());
+                    Log.i("Response header", response.headers().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
