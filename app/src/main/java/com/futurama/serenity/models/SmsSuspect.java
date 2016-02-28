@@ -5,9 +5,11 @@ import com.raizlabs.android.dbflow.annotation.ConflictAction;
 import com.raizlabs.android.dbflow.annotation.ModelContainer;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by wilfried on 06/01/2016.
@@ -120,5 +122,16 @@ public class SmsSuspect extends BaseModel {
                 ", longitude=" + longitude +
                 ", envoyerposition=" + envoyerposition +
                 '}';
+    }
+
+    public static SmsSuspect getById(int id) {
+        return SQLite.select().from(SmsSuspect.class)
+                .where(SmsSuspect_Table.id.eq(id))
+                .querySingle();
+    }
+
+    public static List<SmsSuspect> getSms() {
+        return SQLite.select().from(SmsSuspect.class)
+                .queryList();
     }
 }

@@ -1,17 +1,25 @@
 package com.futurama.serenity.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.futurama.serenity.R;
+import com.futurama.serenity.models.Message;
 import com.futurama.serenity.models.SmsSuspect;
 import com.futurama.serenity.utils.Session;
+import com.futurama.serenity.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by wilfried on 30/12/2015.
@@ -24,9 +32,9 @@ public class AdapterListSmsSuspect extends BaseAdapter {
     private static Session session;
     SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 
-    public AdapterListSmsSuspect(Context context, List<SmsSuspect> smsSuspectList){
+    public AdapterListSmsSuspect(Context context, List<SmsSuspect> listMessages){
         session = new Session();
-        this.smsSuspectList = smsSuspectList;
+        this.smsSuspectList = listMessages;
         this.mContext = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -51,65 +59,37 @@ public class AdapterListSmsSuspect extends BaseAdapter {
 
         MyTag holder; // Instanciation de notre enveloppe de données
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.timeline_item, null);
-            //holder = new MyTag(convertView);
-            //convertView.setTag(holder);
+            convertView = inflater.inflate(R.layout.list_sms_item, null);
+            holder = new MyTag(convertView);
+            convertView.setTag(holder);
         } else {
             holder = (MyTag) convertView.getTag();
         }
+        SmsSuspect smsSuspect = smsSuspectList.get(position);
 
-        /*StringBuilder detailNumero = new StringBuilder();
-        StringBuilder detailAppel = new StringBuilder();
-        detailNumero.append(contactAttrib.getContact().getCel());
-
-        if(contactAttrib.getTentative() > 0){
-            detailNumero.append(" / ");
-            detailNumero.append(contactAttrib.getTentative());
-            detailNumero.append(" tent.");
-        }
-
-        if(contactAttrib.getDateAppel() != null){
-            detailAppel.append(Utils.dateToString(contactAttrib.getDateAppel(), "dd/MM/yyyy"));
-        }
-
-        if(!contactAttrib.getDuree().isEmpty() && contactAttrib.getDuree() != "0" && contactAttrib.getDuree() != null){
-            detailAppel.append(" - ");
-            try {
-                detailAppel.append(df.format(new Date(Integer.valueOf(contactAttrib.getDuree())*1000L)));
-            }
-            catch (Exception ex){
-                Log.e("ErreurDateFormat", ex.getMessage());
-                detailAppel.append(contactAttrib.getDuree());
-            }
-        }
-
-        holder.txtNom.setText(contactAttrib.getContact().getName());
-        holder.txtContact.setText(detailNumero.toString());
-        holder.txtDetail.setText(detailAppel.toString());
-        holder.contactAttrib = contactAttrib;
-        holder.choixNumero.setChecked(true);*/
-
+        holder.txtExpediteur.setText(smsSuspect.getNumerosuspect());
+        holder.txtMessage.setText(smsSuspect.getMsg());
+        holder.txtDate.setText("Réçu le "+Utils.dateToString(smsSuspect.getDatereception(), "dd/MM/yyyy à HH:mm:ss"));
+        Log.e("SmsSuspect", smsSuspect.toString());
         return convertView;
     }
 
     static class MyTag {
 
-        /*@Bind(R.id.sms_nom)
-        TextView txtNom;
+        @Bind(R.id.viewExpediteur)
+        View viewExpediteur;
 
-        @Bind(R.id.sms_contact)
-        TextView txtContact;
+        @Bind(R.id.expediteur)
+        TextView txtExpediteur;
 
-        @Bind(R.id.sms_detail)
-        TextView txtDetail;
+        @Bind(R.id.txtSms)
+        TextView txtMessage;
 
-        @Bind(R.id.sms_choix)
-        CheckBox choixNumero;
-
-        ContactAttrib contactAttrib;
+        @Bind(R.id.txtDateReception)
+        TextView txtDate;
 
         public MyTag(View view){
             ButterKnife.bind(this, view);
-        }*/
+        }
     }
 }

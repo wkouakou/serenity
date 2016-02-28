@@ -78,7 +78,7 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void verifySms(String numeroSuspect, final long dateReception, final String msg){
-        if(!WhiteList.isClean(numeroSuspect) && !Utils.isClean(msg)){//Numero et contenu du message suspects
+        //if(!WhiteList.isClean(numeroSuspect) && !Utils.isClean(msg)){//Numero et contenu du message suspects
             SmsSuspect smsSuspect = new SmsSuspect();
             smsSuspect.setDatereception(new Date(dateReception));
             smsSuspect.setMsg(msg);
@@ -88,7 +88,7 @@ public class SmsReceiver extends BroadcastReceiver {
             //Notify user
             Intent intentSms = new Intent(mContext, SmsActivity.class);
             sendNotification(intentSms, "Serenity", "Vous avez réçu un SMS suspect");
-        }
+        //}
     }
 
     private void sendNotification(Intent intent, String title, String message) {

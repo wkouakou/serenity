@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:theme="@style/AppTheme"
+    android:background="@color/cardview_light_background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal">
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/position_group"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Envoi position"
+                android:id="@+id/envoyer_position"
+                android:layout_marginLeft="15dp"
+                android:checked="true" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:text="Ne pas envoyé"
+                android:id="@+id/envoyer_position_non"
+                android:checked="false"
+                android:layout_gravity="right" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText android:id="@+id/numero" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="@string/prompt_numero"
+            android:inputType="text" android:maxLines="1"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin">
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/btn_ajouter_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/iconify_ajout_contact"
+            android:textColor="@color/colorAccent"
+            android:background="@android:color/transparent"
+            android:shadowColor="@color/cardview_light_background"
+            android:layout_alignParentLeft="true"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="1"
+            android:textSize="15sp"/>
+
+        <com.joanzapata.iconify.widget.IconButton
+            android:id="@+id/btn_valider_statut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/iconify_title_valider"
+            android:background="@android:color/transparent"
+            android:textColor="@color/colorPrimary"
+            android:shadowColor="@color/cardview_light_background"
+            android:layout_alignParentRight="true"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="1"
+            android:textSize="15sp"/>
+    </RelativeLayout>
+</LinearLayout>

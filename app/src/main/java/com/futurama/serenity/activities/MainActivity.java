@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private LocationRequest mLocationRequest;
 
-    private ListView listViewSecteurActivite;
-
     private ProgressDialog progressDialogs;
 
     private GoogleCloudMessaging gcm = null;
@@ -141,15 +139,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         subscribe();
         loadContacts();
         initView();
+        getTimeline();
     }
 
     private void initView(){
-        Message message = new Message();
-        message.setType(3);
-        message.setDateenvoi(new Date());
-        message.setMsg("Veuillez changer vos mots de passe de façon régulière.");
-        message.save();
-        getTimeline();
         messageList = Message.getMessages();
         if(messageList.size() > 0){
             adapterTimeline = new AdapterTimeline(mContext, messageList);
@@ -170,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void synchro(Synchronisation synchro){
         switch (synchro.getType()){
             case "refreshTimeline" :
+                session.getEditor().putBoolean("synchTimeline", false).commit();
                 if(adapterTimeline != null){
                     adapterTimeline.notifyDataSetChanged();
                 }
@@ -212,7 +206,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         switch (id){
             case R.id.action_actualiser :
-                //TODO Actualiser
+                session.getEditor().putBoolean("synchTimeline", true).commit();
+                getTheme();
                 return true;
             case R.id.action_sms :
                 Intent intentSms = new Intent(mContext, SmsActivity.class);
@@ -592,38 +587,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void getTimeline(){
-        Retrofit client = MainApplication.getRetrofit();
-        ClientService service = client.create(ClientService.class);
-        Call<GenericObjectResult<Message>> call = service.getTimeline(session.getSharedPref().getString("token", "*******************"), session.getSharedPref().getInt("limit", 10), session.getSharedPref().getInt("offset", 0));
-        call.enqueue(new Callback<GenericObjectResult<Message>>() {
-            @Override
-            public void onResponse(Response<GenericObjectResult<Message>> response) {
-                if (response.isSuccess()) {
-                    // request successful (status code 200, 201)
-                    GenericObjectResult<Message> result = response.body();
-                    if (result.getTotal() > 0) {
-                        messageList.clear();
-                        for(Message message : result.getRows()){
-                            message.save();
-                            messageList.add(message);
+        if(session.getSharedPref().getBoolean("synchTimeline", false)){
+            Retrofit client = MainApplication.getRetrofit();
+            ClientService service = client.create(ClientService.class);
+            Call<GenericObjectResult<Message>> call = service.getTimeline(session.getSharedPref().getString("token", "*******************"), session.getSharedPref().getInt("limit", 10), session.getSharedPref().getInt("offset", 0));
+            call.enqueue(new Callback<GenericObjectResult<Message>>() {
+                @Override
+                public void onResponse(Response<GenericObjectResult<Message>> response) {
+                    if (response.isSuccess()) {
+                        // request successful (status code 200, 201)
+                        GenericObjectResult<Message> result = response.body();
+                        if (result.getTotal() > 0) {
+                            messageList.clear();
+                            for(Message message : result.getRows()){
+                                message.save();
+                                messageList.add(message);
+                            }
+                            Log.e("Synchro", messageList.toString());
+                            MainApplication.getBus().post(new Synchronisation("refreshTimeline"));
                         }
-                        Log.e("Synchro", messageList.toString());
-                        MainApplication.getBus().post(new Synchronisation("refreshTimeline"));
+                        Log.i("RegistrationID", result.toString());
+                    } else {
+                        //request not successful (like 400,401,403 etc)
+                        //Handle errors
+                        Log.i("Response code", String.valueOf(response.code()));
+                        Log.i("Response message", response.message());
+                        Log.i("Response header", response.headers().toString());
                     }
-                    Log.i("RegistrationID", result.toString());
-                } else {
-                    //request not successful (like 400,401,403 etc)
-                    //Handle errors
-                    Log.i("Response code", String.valueOf(response.code()));
-                    Log.i("Response message", response.message());
-                    Log.i("Response header", response.headers().toString());
                 }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                t.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
     }
 }
